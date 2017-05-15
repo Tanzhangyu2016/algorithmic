@@ -11,10 +11,6 @@ final class MIHFG
             private $_array = [];  //原数组
             private $_reverse = []; //用于储存$_index的索引的反向堆
             private $_indexCounts = 0; //索引数组长度
-             public function __construct()
-            {
-                
-            }
            // 更新索引数组
             private function _shiftDown(int $pointer=0,string $compare){
                      $candidate = $this->_index[$pointer];

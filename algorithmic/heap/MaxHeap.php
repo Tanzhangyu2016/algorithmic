@@ -1,6 +1,8 @@
 <?php
 /**
-* 
+* 类名：最大堆
+   作者：tanzhangyu
+   日期：2017-04-14
 */
 namespace algorithmic\heap;
 class MaxHeap 

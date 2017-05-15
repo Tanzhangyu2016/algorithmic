@@ -1,6 +1,10 @@
 <?php
-// 第一版
-// 声明一个快速排序的类
+/**
+ * 类名：排序
+ * 作者：tanzhangyu
+ * 日期：2017-05-15
+ */
+namespace algorithmic\sort;
 class Sort{
          /**
           * [swap change the value of two element]
@@ -35,7 +39,7 @@ class Sort{
           }                                      
 
                  // 以下是选择排序法
-                public static function selectionSort($array){
+                public static function selectionSort(array$array){
                     $arrayLength=count($array);
                     for($i=0;$i< $arrayLength;++$i){
                       $minIndex=$i;
@@ -50,7 +54,7 @@ class Sort{
                 }
 
                 // 以下是插入排序法
-                public static function insertionSort($array){
+                public static function insertionSort(array$array){
                      $arrayLength=count($array);
                     for ($i=1;$i< $arrayLength;$i++){
                         $needle=$array[$i];
@@ -77,7 +81,7 @@ class Sort{
                     return $array;
                 }
                 // 以下是冒泡排序法
-                public static function  bubbleSort($array){
+                public static function  bubbleSort(array$array){
                      $arrayLength=count($array);
                     for($i=0,$maxSelectableIndex= $arrayLength-1;$i<$arrayLength;++$i,--$maxSelectableIndex){
                 //    每一次最大可排序的索引  
@@ -324,7 +328,7 @@ class Sort{
      * @param  [array] $array [array to sort]
      * @return [array]        [this sorted array]
      *///鸡尾酒排序2
-     public static function cocktailSort2($array){
+     public static function cocktailSort2(array$array){
     //将最大值排到队尾
         $len = count($array);
         $len12 = $len/2;
@@ -347,7 +351,7 @@ class Sort{
      * @param  [array] $array [array to sort]
      * @return [array]        [this sorted array]
      *///鸡尾酒排序3 基于cocktailSort2 优化
-     public static function cocktailSort3($array){
+     public static function cocktailSort3(array$array){
     //将最大值排到队尾
         $len = count($array);
         $len12 = $len/2;
@@ -525,7 +529,7 @@ class Sort{
 
 }
  
- function createArray($n){
+ function createArray(int$n){
     $array = [];
     for ($i=0; $i < $n; ++$i) { 
         $array[] = mt_rand(0,$n);
@@ -555,36 +559,36 @@ $array = createArray(1000000);
 // $s = microtime(true);
 // Sort::selectionSort($array);
 // echo 'selectionSort: ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::radixSort($array);
-echo 'radixSort:      ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::radixSort2($array);
-echo 'radixSort2:      ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::countSort($array);
-echo 'countSort:      ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::shellSort($array);
-echo 'shellSort:      ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::mergeSort($array);
-echo 'mergeSort:    ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::mergeSortBU($array);
-echo 'mergeSortBU: ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::mergeSortBUBU($array);
-echo 'mergeSortBUBU:',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::quickSortOne($array);
-echo 'quickSortOne:  ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::quickSortTwo($array);
-echo 'quickSortTwo:  ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::quickSortThree($array);
-echo 'quickSortThree:',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::radixSort($array);
+// echo 'radixSort:      ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::radixSort2($array);
+// echo 'radixSort2:      ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::countSort($array);
+// echo 'countSort:      ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::shellSort($array);
+// echo 'shellSort:      ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::mergeSort($array);
+// echo 'mergeSort:    ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::mergeSortBU($array);
+// echo 'mergeSortBU: ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::mergeSortBUBU($array);
+// echo 'mergeSortBUBU:',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::quickSortOne($array);
+// echo 'quickSortOne:  ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::quickSortTwo($array);
+// echo 'quickSortTwo:  ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::quickSortThree($array);
+// echo 'quickSortThree:',microtime(true)-$s,'<br>';
 // 
 // 
 // $n = 10;
