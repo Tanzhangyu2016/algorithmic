@@ -23,7 +23,7 @@ class Sort{
          * @param  boolean $asc   [description]
          * @return [int]         [-1:do not need to check; 0: has wrong ;1:all right]
          */
-          public static function checkSort(array$array,bool $asc=true):int{
+          public static function checkSort(array$array,bool $asc=true){
               $count = count($array)-1;
               if($count<1) return -1;
               if($asc){
@@ -224,6 +224,20 @@ class Sort{
                                                         self::swap($array[$indexStart],$array[$right]);
                                                         return $right;
                                                     }
+  //for循环比while循环快一丢丢
+   private static function partitionForQuickSort2For(&$array,$indexStart,$indexEnd){
+                                                      $neddle=mt_rand($indexStart,$indexEnd);
+                                                      $elementForComparision=$array[$neddle];
+                                                       self::swap($array[$neddle],$array[$indexStart]);
+                                                      for($left=$indexStart+1,$right=$indexEnd;;++$left,--$right){
+                                                          while($left<=$indexEnd&&$array[$left]<$elementForComparision) {++$left;}
+                                                          while($right>$indexStart&&$array[$right]>$elementForComparision) {--$right;}
+                                                          if ($left>$right)break; 
+                                                          self::swap($array[$left],$array[$right]);
+                                                      }
+                                                      self::swap($array[$indexStart],$array[$right]);
+                                                      return $right;
+                                                  }
 
     //  声明一个三路排序的具体方法
         private static function partitionForQuickSort3(&$array,$indexStart,$indexEnd){
@@ -266,8 +280,17 @@ class Sort{
                                                 $periphery=self::partitionForQuickSort2($array,$indexStart,$indexEnd);
                                                 self::subQuickSort2($array,$indexStart,$periphery-1);
                                                 self::subQuickSort2($array,$periphery+1,$indexEnd);
-                                            }    
-       
+                                            } 
+
+     private static function subQuickSort2For(&$array,$indexStart,$indexEnd){
+                                               // if ($indexStart>=$indexEnd) return;
+                                                if ($indexEnd-$indexStart<8) //  大概可以提高10%的性能
+                                                return self::subInsertionSort($array,$indexStart,$indexEnd);
+                                                $periphery=self::partitionForQuickSort2For($array,$indexStart,$indexEnd);
+                                                self::subQuickSort2For($array,$indexStart,$periphery-1);
+                                                self::subQuickSort2For($array,$periphery+1,$indexEnd);
+                                            } 
+
           // 声明一个三路快速排序的子函数
        private static function  subQuickSort3(&$array,$indexStart,$indexEnd){
                                                   // if ($indexStart>=$indexEnd) return;
@@ -279,21 +302,24 @@ class Sort{
                                              }
         // 声明一个一路快速排序接口
         public static function quickSortOne(array$array){
-                                                        if (!is_array($array))return;
                                                         $arrayLength=count($array);
                                                         self::subQuickSort($array,0,$arrayLength-1);
                                                         return $array;
                                                     }
         // 声明一个二路快速排序接口
       public static function quickSortTwo(array$array){
-                                                if (!is_array($array))return;
                                                 $arrayLength=count($array);
                                                 self::subQuickSort2($array,0,$arrayLength-1);
                                                 return $array;
                                             } 
+
+     public static function quickSortTwoFor(array$array){
+                                                $arrayLength=count($array);
+                                                self::subQuickSort2For($array,0,$arrayLength-1);
+                                                return $array;
+                                            } 
          // 声明一个三路快速排序接口
       public static function quickSortThree(array$array){
-                                                  if (!is_array($array))return;
                                                   $arrayLength=count($array);
                                                   self::subQuickSort3($array,0,$arrayLength-1);
                                                   return $array;
@@ -303,8 +329,8 @@ class Sort{
      * @param  [array] $array [array to sort]
      * @return [array]        [this sorted array]
      *///鸡尾酒排序 已优化
-     public static function cocktailSort($array){
-             for ($i = 0,$minIndex =$i,$maxIndex = $i,$len = count($array); $i < $len; ++$i) { 
+     public static function cocktailSort(array$array){
+             for ($i = 0,$minIndex =$i,$maxIndex = $i,$len = count($array); $i < $len; ++$i,--$len) { 
                      for ($j = $i+1; $j < $len; ++$j) {  
                           if($array[$j]<$array[$minIndex])
                                  $minIndex = $j;
@@ -316,9 +342,8 @@ class Sort{
                            self::swap($array[$len-1],$array[$minIndex]);
                      elseif($array[$len-1]<$array[$maxIndex])
                          self::swap($array[$len-1],$array[$maxIndex]);
-                     --$len;
                      $minIndex = $i+1;
-                     $maxIndex = $i+1;
+                     $maxIndex = $minIndex;
              }
              return $array;
      } 
@@ -375,7 +400,7 @@ class Sort{
        * @param  [array] $array [description]
        * @return [array]        [description]
        */
-      public static function radixSort(array $array):array{
+      public static function radixSort(array $array){
           if(count($array)<2) return $array;
           // 最大值假设为第一个元素
           $max = current($array);
@@ -429,7 +454,7 @@ class Sort{
        * @return [array]        [description]
        * 基于radixSort优化理论上优于radixSort，但实际上在（数据10000以上）不如radixSort
        */
-      public static function radixSort2(array $array):array{
+      public static function radixSort2(array $array){
           if(count($array)<2) return $array;
           // 最大值假设为第一个元素
           $max = current($array);
@@ -586,22 +611,23 @@ $array = createArray(1000000);
 // $s = microtime(true);
 // Sort::quickSortTwo($array);
 // echo 'quickSortTwo:  ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::quickSortTwoFor($array);
+echo 'quickSortTwoFor:  ',microtime(true)-$s,'<br>';
 // $s = microtime(true);
 // Sort::quickSortThree($array);
 // echo 'quickSortThree:',microtime(true)-$s,'<br>';
 // 
 // 
-// $n = 10;
+// $n = 100;
 // $array = createArray($n);
-// $arr = $array;
-// print_r($arr);
 // echo memory_get_usage(),'<br>';
 // $s = microtime(true);
-// $array=Sort::shellSort2($array);
+// $array=Sort::quickSortTwoFor($array);
 // echo 'countSort2:      ',microtime(true)-$s,'<br>';
 // echo memory_get_peak_usage(),'<br>';
 // echo Sort::checkSort($array),'<br>';
-// print_r($array);
+
 
 
 
