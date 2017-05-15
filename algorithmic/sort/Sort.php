@@ -63,20 +63,19 @@ class Sort{
                 }
 
                 // 以下是希尔排序法
-                public static function  shellSort(&$array){//$gCount是一个比数组长度小的奇数
+                public static function  shellSort(array$array){//$gCount是一个比数组长度小的奇数
                     if (!is_array($array))return;
+                    $array = &$array;
                     $arrayLength=count($array);
                     for ($gap=floor($arrayLength/2);$gap>0;$gap=floor($gap/=2)){
                         for ($i=$gap;$i<$arrayLength;$i++){
-                            $needle=$array[$i];
-                            for ($j=$i-$gap; $j >0&&$needle<$array[$j]; $j-=$gap) { 
+                            for ($j=$i-$gap; $j >=0&&$array[$j+$gap]<$array[$j]; $j-=$gap) { 
                                 $array[$j+$gap]=$array[$j];
                             }
-                            $array[$j+$gap]=$needle;
                         }
                     }
+                    return $array;
                 }
-
                 // 以下是冒泡排序法
                 public static function  bubbleSort($array){
                      $arrayLength=count($array);
@@ -141,15 +140,16 @@ class Sort{
             }
 
             // 声明一个归并排序接口函数
-            public static function mergeSort(&$array){
+            public static function mergeSort(array$array){
                   if (!is_array($array)) return;
                    $offsetLeft=0;
                    $offsetRight=count($array)-1;
                    self::infiniteBisetion($array,$offsetLeft,$offsetRight);
+                   return $array;
             }
 
             // 声明一个自底向上的归并排序
-            public static function mergeSortBU(&$array){
+            public static function mergeSortBU(array$array){
                      if (!is_array($array)) return;
                      $arrayLength=count($array);
                      for ($size=1; $size <=$arrayLength ; $size+=$size) { 
@@ -162,9 +162,10 @@ class Sort{
                                 }
                             }
                      }
+                     return $array;
             }
           // 声明另一个自底向上的归并排序  
-            public static function mergeSortBUBU(&$array){
+            public static function mergeSortBUBU(array$array){
                      if (!is_array($array)) return;
                      $arrayLength=count($array);
                      for ($size=1; $size <=$arrayLength ; $size+=$size) { 
@@ -173,6 +174,7 @@ class Sort{
                                      self:: mergeMethod($array,$i,$i+$size-1,min($arrayLength-1,$i+$size*2-1));
                             }
                      }
+                     return $array;
             }
 
          // 声明一个用于辅助高级排序的插入排序方法
@@ -272,22 +274,25 @@ class Sort{
                                                   self::subQuickSort3($array,$periphery['gt'],$indexEnd);
                                              }
         // 声明一个一路快速排序接口
-        public static function quickSortOne(&$array){
+        public static function quickSortOne(array$array){
                                                         if (!is_array($array))return;
                                                         $arrayLength=count($array);
                                                         self::subQuickSort($array,0,$arrayLength-1);
+                                                        return $array;
                                                     }
         // 声明一个二路快速排序接口
-      public static function quickSortTwo(&$array){
+      public static function quickSortTwo(array$array){
                                                 if (!is_array($array))return;
                                                 $arrayLength=count($array);
                                                 self::subQuickSort2($array,0,$arrayLength-1);
+                                                return $array;
                                             } 
          // 声明一个三路快速排序接口
-      public static function quickSortThree(&$array){
+      public static function quickSortThree(array$array){
                                                   if (!is_array($array))return;
                                                   $arrayLength=count($array);
                                                   self::subQuickSort3($array,0,$arrayLength-1);
+                                                  return $array;
                                                }        
     /**
      * [cockTailSort one way to sort by size the min and max element each turn]
@@ -531,14 +536,7 @@ class Sort{
  
 //以下是测试
 
-// $array = createArray(100000);
-// $array1 = $array;
-// $array2 = $array;
-// $array3 = $array;
-// $array4 = $array;
-// $array5 = $array;
-// $array6 = $array;
-// $array7 = $array;
+$array = createArray(1000000);
 // $s = microtime(true);
 // Sort::cocktailSort2($array);
 // echo 'cocktailSort2: ',microtime(true)-$s,'<br>';
@@ -557,47 +555,50 @@ class Sort{
 // $s = microtime(true);
 // Sort::selectionSort($array);
 // echo 'selectionSort: ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::radixSort($array);
-// echo 'radixSort:      ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::radixSort2($array);
-// echo 'radixSort2:      ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::countSort($array);
-// echo 'countSort:      ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::shellSort($array1);
-// echo 'shellSort:      ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::mergeSort($array2);
-// echo 'mergeSort:    ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::mergeSortBU($array3);
-// echo 'mergeSortBU: ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::mergeSortBUBU($array4);
-// echo 'mergeSortBUBU:',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::quickSortOne($array5);
-// echo 'quickSortOne:  ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::quickSortTwo($array6);
-// echo 'quickSortTwo:  ',microtime(true)-$s,'<br>';
-// $s = microtime(true);
-// Sort::quickSortThree($array7);
-// echo 'quickSortThree:',microtime(true)-$s,'<br>';
-// $n = 5000000;
+$s = microtime(true);
+Sort::radixSort($array);
+echo 'radixSort:      ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::radixSort2($array);
+echo 'radixSort2:      ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::countSort($array);
+echo 'countSort:      ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::shellSort($array);
+echo 'shellSort:      ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::mergeSort($array);
+echo 'mergeSort:    ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::mergeSortBU($array);
+echo 'mergeSortBU: ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::mergeSortBUBU($array);
+echo 'mergeSortBUBU:',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::quickSortOne($array);
+echo 'quickSortOne:  ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::quickSortTwo($array);
+echo 'quickSortTwo:  ',microtime(true)-$s,'<br>';
+$s = microtime(true);
+Sort::quickSortThree($array);
+echo 'quickSortThree:',microtime(true)-$s,'<br>';
+// 
+// 
+// $n = 10;
 // $array = createArray($n);
+// $arr = $array;
+// print_r($arr);
 // echo memory_get_usage(),'<br>';
 // $s = microtime(true);
-// $array = Sort::radixSort($array);
-// $array = Sort::radixSort2($array);
-// $array=Sort::countSort($array);
-// Sort::quickSortOne($array);
+// $array=Sort::shellSort2($array);
 // echo 'countSort2:      ',microtime(true)-$s,'<br>';
 // echo memory_get_peak_usage(),'<br>';
 // echo Sort::checkSort($array),'<br>';
+// print_r($array);
+
 
 
 
