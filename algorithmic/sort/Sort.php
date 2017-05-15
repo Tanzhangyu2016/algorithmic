@@ -183,9 +183,9 @@ class Sort{
 
          // 声明一个用于辅助高级排序的插入排序方法
           private  static function subInsertionSort(&$array,$offsetLeft,$offsetRight){
-                                                        for ($i=$offsetLeft+1;$i<$offsetRight+1;$i++){
+                                                        for ($i=$offsetLeft+1;$i<$offsetRight+1;++$i){
                                                             $needle=$array[$i];
-                                                            for ($j=$i; $j >$offsetLeft&&$needle<$array[$j-1]; $j--) { 
+                                                            for ($j=$i; $j >$offsetLeft&&$needle<$array[$j-1]; --$j) { 
                                                                  $array[$j]=$array[$j-1];                                                   
                                                             }
                                                             $array[$j]=$needle;
@@ -550,8 +550,66 @@ class Sort{
          }
          return $outPut;
       }
+     /**
+      * [bucketSort the way to use bucket thoughts]
+      * @param  array       $array [the array to sort]
+      * @param  int|integer $n     [how many buckets]
+      * @return [array]             [sorted array]
+      */
+      public static function bucketSort(array $array,int $n=2){
+           $count = count($array); 
+            if($count<8)  //stop to use another way to sort
+              return self::insertionSort($array);
+           $outPut = [];  
+           $buckets = []; //array for buckets
+           $min = current($array); 
+           $max = $min;
+           foreach ($array as $key => $value) { 
+                if($value<$min)
+                   $min = $value;
+                 elseif($value>$max)
+                   $max = $value;
+           }
 
+           $div = floor(($max-$min)/$n); 
+           for ($i = 1; $i <= $n; ++$i) { 
+                $buckets[$i] = null;
+           }
+           $maxOfFirst = $min+$div; //max of the first bucket
+           $minOflast = $min*$div*($n-1); //min of the last bucket
+           //put the element to the right bucket
+           foreach ($array as $v) { 
+               if($v<$maxOfFirst)
+                   $buckets[1][] = $v;
+                elseif($v>$minOflast)
+                   $buckets[$n][] = $v;
+                else{
+                  $index = ceil($v/$div);
+                  $buckets[$index][] = $v;
+                }
+           }
+           
+    // use the other way to sort each bucket,here is the quicksort;
+           foreach ($buckets as &$value) {
+               if($value){
+                  $indexEnd = count($value)-1;
+                  if($indexEnd>0) 
+                      self::subQuickSort2For($value,0,$indexEnd);
+               }  
+           }
+           
+           //put the sorted element to an array to return; 
+           foreach ($buckets as $item) {
+               if($item){
+                    foreach ($item as $v) {
+                        $outPut[] = $v;
+                    }
+               }
+           }
 
+           return $outPut;
+           
+      }
 }
  
  function createArray(int$n){
@@ -566,6 +624,19 @@ class Sort{
 //以下是测试
 
 $array = createArray(1000000);
+//check the sort
+
+// echo memory_get_usage(),'<br>';
+// $s = microtime(true);
+// $array=Sort::bucketSort($array,32);
+// $array=Sort::quickSortTwoFor($array);
+// $array = sort::countSort($array);
+// echo 'countSort2:      ',microtime(true)-$s,'<br>';
+// echo memory_get_peak_usage(),'<br>';
+// echo Sort::checkSort($array),'<br>';
+ 
+ //compare each sort;
+
 // $s = microtime(true);
 // Sort::cocktailSort2($array);
 // echo 'cocktailSort2: ',microtime(true)-$s,'<br>';
@@ -611,22 +682,17 @@ $array = createArray(1000000);
 // $s = microtime(true);
 // Sort::quickSortTwo($array);
 // echo 'quickSortTwo:  ',microtime(true)-$s,'<br>';
-$s = microtime(true);
-Sort::quickSortTwoFor($array);
-echo 'quickSortTwoFor:  ',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// Sort::quickSortTwoFor($array);
+// echo 'quickSortTwoFor:  ',microtime(true)-$s,'<br>';
 // $s = microtime(true);
 // Sort::quickSortThree($array);
 // echo 'quickSortThree:',microtime(true)-$s,'<br>';
 // 
 // 
-// $n = 100;
-// $array = createArray($n);
-// echo memory_get_usage(),'<br>';
-// $s = microtime(true);
-// $array=Sort::quickSortTwoFor($array);
-// echo 'countSort2:      ',microtime(true)-$s,'<br>';
-// echo memory_get_peak_usage(),'<br>';
-// echo Sort::checkSort($array),'<br>';
+
+
+
 
 
 
