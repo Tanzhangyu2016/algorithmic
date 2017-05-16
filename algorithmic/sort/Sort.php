@@ -17,6 +17,39 @@ class Sort{
                                                          $b=$a;
                                                          $a=$tmp;
                                                 }
+           /**
+            * [createDisorderedArray to create a disordered array for sort testing]
+            * @param  int    $n [the length of this array]
+            * @return [array]    [ a disordered array]
+            */
+           public static function createDisorderedArray(int$n){
+                                            $array = [];
+                                            for ($i=0; $i < $n; ++$i) { 
+                                                $array[] = mt_rand(0,$n);
+                                            }
+                                            shuffle($array);
+                                            return $array;
+                                         }
+           /**
+            * [createAlmostOrderedArray to create an almost ordered array for sort testing]
+            * @param  int         $n     [the length of this array]
+            * @param  int         $m     [how many pairs of element in the array should be change location]
+            * @param  int|integer $first [the range of the $array[0]]
+            * @return [array]             [an almost ordered array]
+            */
+           public static function createAlmostOrderedArray(int$n,int$m,int $first = 10){
+                  $array = [];
+                  $array[0] = mt_rand(0,$first);
+                  for ($i=1; $i <=$n ; ++$i) { 
+                      $array[$i] = $array[$i-1]+mt_rand(0,2);
+                  }
+                  for ($i=0; $i < $m; ++$i) { 
+                       $a = mt_rand(0,$n);
+                       $b = mt_rand(0,$n);
+                       self::swap($array[$a],$array[$b]);
+                  }
+                  return $array;
+           }                              
         /**
          * [checkSort check the result of the sorting method]
          * @param  [array]  $array [description]
@@ -397,8 +430,8 @@ class Sort{
       } 
       /**
        * [radixSort 基数排序]
-       * @param  [array] $array [description]
-       * @return [array]        [description]
+       * @param  [array] $array [array to sort]
+       * @return [array]        [ordered array]
        */
       public static function radixSort(array $array){
           if(count($array)<2) return $array;
@@ -543,7 +576,7 @@ class Sort{
          foreach ($count as $k => $v) {
              $outPut[$v-1] = $k;
          }
-      //填补重复element的位置
+      //填补重复的element的位置
          for ($i=$length-1; $i >=0 ; --$i) { 
             if(null==$outPut[$i])
                 $outPut[$i] = $outPut[$i+1];
@@ -612,18 +645,12 @@ class Sort{
       }
 }
  
- function createArray(int$n){
-    $array = [];
-    for ($i=0; $i < $n; ++$i) { 
-        $array[] = mt_rand(0,$n);
-    }
-    shuffle($array);
-    return $array;
- }
+ 
  
 //以下是测试
 
-$array = createArray(1000000);
+// $array = createArray(1000000);
+// $array = Sort::createDisorderedArray(1000000);
 //check the sort
 
 // echo memory_get_usage(),'<br>';
