@@ -37,7 +37,7 @@ class Sort{
             * @param  int|integer $first [the range of the $array[0]]
             * @return [array]             [an almost ordered array]
             */
-           public static function createAlmostOrderedArray(int$n,int$m,int $first = 10){
+           public static function createAlmostOrderedArray(int$n,int$m=10,int $first = 10){
                   $array = [];
                   $array[0] = mt_rand(0,$first);
                   for ($i=1; $i <=$n ; ++$i) { 
@@ -649,15 +649,15 @@ class Sort{
  
 //以下是测试
 
-// $array = createArray(1000000);
+// $array = Sort::createAlmostOrderedArray(100);
+
 // $array = Sort::createDisorderedArray(1000000);
+// $array1 = $array;
 //check the sort
 
 // echo memory_get_usage(),'<br>';
 // $s = microtime(true);
-// $array=Sort::bucketSort($array,32);
-// $array=Sort::quickSortTwoFor($array);
-// $array = sort::countSort($array);
+// $array = Sort::countSort($array);
 // echo 'countSort2:      ',microtime(true)-$s,'<br>';
 // echo memory_get_peak_usage(),'<br>';
 // echo Sort::checkSort($array),'<br>';
@@ -715,6 +715,9 @@ class Sort{
 // $s = microtime(true);
 // Sort::quickSortThree($array);
 // echo 'quickSortThree:',microtime(true)-$s,'<br>';
+// $s = microtime(true);
+// sort($array1);
+// echo 'sort                :',microtime(true)-$s,'<br>';
 // 
 // 
 

@@ -242,7 +242,7 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
     return $str;
 }
 
-    // 实现标准库strstr()
+    // 实现标准库strpos()
     public static function strpos(string $haystack,$needle,int $offset = 0):int{
           $needle = (string)$needle;
           $lengthOfNeedle = strlen($needle);
@@ -263,7 +263,7 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
          }
          return -1;
     }
-
+   //实现标准库strstr()
     public static function strstr(string $haystack,$needle,bool$before_needle = false){
           $point = self::strpos($haystack,$needle);
           if($point<0) return false; 
@@ -304,24 +304,25 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
      * @param  [string] $find [the word to search]
      * @param  [string] $path [the path of file]
      * @return [array]       [the result of the searching]
+     * 返回一个文件里某个单词的信息，包括总数，位置
      */
      public static function findWordByPreg($find,$path){
        $file = fopen($path, 'r');
        $line = 1;
        $count = 0;
-       $res = [];
-       $p = '/\b'.$find.'\b/'.'i';
-       $pt = '/^'.$find.'$/i';
+       $res = []; //结果集
+       $p1 = '/\b'.$find.'\b/i'; //不区分大小写 匹配一个一行string里的特定单词
+       $p2 = '/^'.$find.'$/i'; //不区分大小写匹配数组里的特定单词
        $char = "。、！？：；﹑•＂…‘’“”〝〞∕¦‖—　〈〉﹞﹝「」‹›〖〗】【»«』『〕〔》《﹐¸﹕︰﹔！¡？¿﹖﹌﹏﹋＇´ˊˋ―﹫︳︴¯＿￣﹢﹦﹤‐­˜﹟﹩﹠﹪﹡﹨﹍﹉﹎﹊ˇ︵︶︷︸︹︿﹀︺︽︾ˉ﹁﹂﹃﹄︻︼（）";
-       $pattern =  array(
+       $p3 =  array(  //去除所有中英文标点符号
       "/[[:punct:]]/i", //英文标点符号
       '/['.$char.']/u', //中文标点符号
       // '/[ ]{2,}/' //filtering the space
       );
        while (!feof($file)) {
-            if(($row = fgets($file))!=="\n"){
-               if(preg_match($p,$row,$match)){
-                  $row = preg_replace($pattern,' ',$row);
+            if(($row = fgets($file))!==false){
+               if(preg_match($p1,$row,$match)){
+                  $row = preg_replace($p3,' ',$row);
                      $row = explode(' ', $row);
                      $row = array_values(array_filter($row,function($arg){
                             if($arg==='')
@@ -332,7 +333,7 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
                          return trim($arg);
                      },$row);
                      foreach ($row as $key => $value) {
-                         if(preg_match($pt,$value,$match)){
+                         if(preg_match($p2,$value,$match)){
                           $res[$line][$key+1] = true;
                           ++$count;
                          }
@@ -503,7 +504,127 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
         }
         return $grids;
      }
+     /**
+      * [combination $many = count($allElements) ,how ways of combination if select $selectMany elements of $allElements]
+      * @param  array  $allElements [array must be an index array from $array[0] to $array[$many-1],contains all elements ]
+      * @param  [int] $selectMany          [select $selectMany elements to combinate]
+      * @return [array]              [the result of combination ,include each ways detail and numbers of way]
+      * this way is more effect than the combinationsByTransform($allElements,int $selectMany)
+      */
+     public static function combinations(array $allElements,int $selectMany){
+          $length = count($allElements);
+          if($selectMany<1) return false;
+          if($selectMany==1) return $allElements;
+          $step = $selectMany-1; //区间内最大两个数的最小差
+          $maxOfStart = $length-$step;
+          $combinations = []; //组合数数组
+          //构建仅仅包含两个element的初始组合数组
+          for ($i=0; $i < $maxOfStart ; ++$i) { 
+              for ($j=$step+$i; $j < $length; ++$j) { 
+                  $combinations[] = [$i,$j];
+              }
+          }
+          // get the all combinations;
+          for ($i=$step-1,$endIndex = 1; $i>0 ; --$i,++$endIndex) { 
+              $combination = [];
+              foreach ($combinations as $item) {
+                  sort($item);
+                  $max = $item[$endIndex];
+                  $secMax = $item[$endIndex-1];
+                  for ($j=$secMax+1; $j < $max; ++$j) { 
+                      if($max-$j>=$i){
+                         $combination[] = array_merge($item,[$j]);
+                      }
+                  }
+              }
+              $combinations = $combination;
+          }
+          // transform the value of each combination to the original elements
+          foreach ($combinations as &$value) {
+               foreach ($value as $k => $v) {
+                    $value[$k] = $allElements[$v];
+               }
+          }
+          return $combinations;
+     }
+     
+     /**
+      * [combinationsByTransform]
+      *for example: an array like arr=[1,2,3,4,5] and select 2 element then howmany combinations there is , to solve this , creating an index array arr1=[1,1,0,0,0](tips:1 for selected ,0 for notseleted,and the first combination must be like arr2 that all 1 in front,then use arr1 to find the arr2,doing like following way:from left to right ,find the first '10',make its index as i,make it '01',and make all '1' before i to the head,just like arr1,so 
+      *arr2 = [1,0,1,0,0], by this way until find the arrn = [0,0,0,1,1];create an array to store all combitions
+      *for more understand ,like select 3 in 5
+      *1 1 1 0 0 //1,2,3
+       *    1 1 0 1 0 //1,2,4 
+       *    1 0 1 1 0 //1,3,4 
+       *    0 1 1 1 0 //2,3,4 
+        *   1 1 0 0 1 //1,2,5
+        *   1 0 1 0 1 //1,3,5
+      *     0 1 1 0 1 //2,3,5 
+       *    1 0 0 1 1 //1,4,5
+        *   0 1 0 1 1 //2,4,5
+      *     0 0 1 1 1 //3,4,5
+      * @param  array  $allElements [description]
+      * @param  int    $selectMany  [description]
+      * @return [type]              [description]
+      */
+     public static function combinationsByTransform(array$allElements,int$selectMany){
+            $count = count($allElements);
+            $combination = [];  //each combination
+            for ($i=0; $i < $count; ++$i) { 
+                   $combination[] = 0;
+            }
+            //init the first combination
+            for ($i=0; $i < $selectMany ; ++$i) { 
+                   $combination[$i] = 1;
+            }
+            $transform = [$combination]; //store combination
+            $end = $count-1;
+            for ($i=0,$one=-1;$i<$end; ++$i) {
+                if($combination[$i]) ++$one;
+                if($combination[$i]==1 && $combination[$i+1]==0){
+                     $combination[$i] =0;
+                     $combination[$i+1] = 1;
+                     for ($k=0; $k < $one; ++$k) { 
+                         $combination[$k] = 1;
+                     }
+                     for ($k=$one; $k < $i; ++$k) { 
+                         $combination[$k] = 0;
+                     }
+                     $transform[] = $combination;
+                     $i=-1; 
+                     $one = -1;
+                }
+            }
+            $combinations = [];  //transform the index to original 
+            foreach ($transform as $item) {
+                $child = [];
+                foreach ($item as $k=>$v) {
+                    if($v)
+                      $child[]=$k;
+                }
+                $combinations[] = $child;
+            }
+         return $combinations;
+     }
  }  
+
+ $all = [];
+ $m = 20;
+ $n = 10;
+ for ($i=0; $i < $m; ++$i) { 
+    $all[] = $i;
+ }
+echo memory_get_usage(),'<br>';
+$s = microtime(true);
+$arr =AlgorithmicTest::combinationsByTransform($all,$n);
+// $arr =AlgorithmicTest::combinations($all,$n);
+echo 'times:      ',microtime(true)-$s,'<br>';
+echo memory_get_peak_usage(),'<br>';
+echo 'counts:',count($arr);
+// echo '<pre>';
+// print_r($arr);
+// echo '</pre>';
+
 
 
 
