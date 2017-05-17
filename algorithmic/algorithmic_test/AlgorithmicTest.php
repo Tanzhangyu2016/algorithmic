@@ -564,7 +564,7 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
           if($selectMany<1) return false;
           if($selectMany==1) return $allElements;
           $step = $selectMany-1; //区间内最大两个数的最小差
-          $maxOfStart = $length-$step-1;
+          $maxOfStart = $step-1;
           $combinations = []; //组合数数组
           //构建仅仅包含两个element的初始组合数组
          for ($i=$length-1; $i > $maxOfStart ; --$i) { 
@@ -583,9 +583,7 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
                   $secMax = $item[$endIndex-1];
                   for ($j=$secMax+1; $j < $max; ++$j) { 
                       if($max-$j>=$i){
-                         $temp = $item;
-                         $temp[] = $j;
-                         $combination[] = $temp;
+                          $combination[] = array_merge($item,[$j]);
                       }
                   }
               }
@@ -669,7 +667,7 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
 echo memory_get_usage(),'<br>';
 $s = microtime(true);
 // $arr =AlgorithmicTest::combinationsByTransform($all,$n);
-$arr =AlgorithmicTest::combinations($all,$n);
+$arr =AlgorithmicTest::combinations2($all,$n);
 echo 'times:      ',microtime(true)-$s,'<br>';
 echo memory_get_peak_usage(),'<br>';
 echo 'counts:',count($arr);
