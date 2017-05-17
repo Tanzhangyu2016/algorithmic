@@ -528,12 +528,64 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
           for ($i=$step-1,$endIndex = 1; $i>0 ; --$i,++$endIndex) { 
               $combination = [];
               foreach ($combinations as $item) {
-                  sort($item);
+                  // sort($item);
                   $max = $item[$endIndex];
                   $secMax = $item[$endIndex-1];
                   for ($j=$secMax+1; $j < $max; ++$j) { 
                       if($max-$j>=$i){
-                         $combination[] = array_merge($item,[$j]);
+                         $temp = $item;
+                         $temp[] = $j;
+                         $tmp = $temp[$endIndex];
+                         $temp[$endIndex] = $temp[$endIndex+1];
+                         $temp[$endIndex+1] = $tmp;
+                         $combination[] = $temp;
+                         // $combination[] = array_merge($item,[$j]);
+                      }
+                  }
+              }
+              $combinations = $combination;
+          }
+          // transform the value of each combination to the original elements
+          foreach ($combinations as &$value) {
+               foreach ($value as $k => $v) {
+                    $value[$k] = $allElements[$v];
+               }
+          }
+          return $combinations;
+     }
+          /**
+           * [combinations2 optimize based on the combination()]
+           * @param  array  $allElements [description]
+           * @param  int    $selectMany  [description]
+           * @return [type]              [description]
+           */
+          public static function combinations2(array $allElements,int $selectMany){
+          $length = count($allElements);
+          if($selectMany<1) return false;
+          if($selectMany==1) return $allElements;
+          $step = $selectMany-1; //区间内最大两个数的最小差
+          $maxOfStart = $length-$step-1;
+          $combinations = []; //组合数数组
+          //构建仅仅包含两个element的初始组合数组
+         for ($i=$length-1; $i > $maxOfStart ; --$i) { 
+              for ($j=$i-$step; $j >=0; --$j) { 
+                  $combinations[] = [$i,$j];
+              }
+          }
+          // get the all combinations;
+          for ($i=$step-1,$endIndex = 1; $i>0 ; --$i,++$endIndex) { 
+              $combination = [];
+              foreach ($combinations as $item) {
+                  $tmp = $item[$endIndex];
+                  $item[$endIndex] = $item[$endIndex-1];
+                  $item[$endIndex-1] = $tmp;
+                  $max = $item[$endIndex];
+                  $secMax = $item[$endIndex-1];
+                  for ($j=$secMax+1; $j < $max; ++$j) { 
+                      if($max-$j>=$i){
+                         $temp = $item;
+                         $temp[] = $j;
+                         $combination[] = $temp;
                       }
                   }
               }
@@ -616,8 +668,8 @@ public static function createStr(int $len,int $min=0,int $max=9):string{
  }
 echo memory_get_usage(),'<br>';
 $s = microtime(true);
-$arr =AlgorithmicTest::combinationsByTransform($all,$n);
-// $arr =AlgorithmicTest::combinations($all,$n);
+// $arr =AlgorithmicTest::combinationsByTransform($all,$n);
+$arr =AlgorithmicTest::combinations($all,$n);
 echo 'times:      ',microtime(true)-$s,'<br>';
 echo memory_get_peak_usage(),'<br>';
 echo 'counts:',count($arr);
